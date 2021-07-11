@@ -1,0 +1,207 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class DAO {
+    protected Connection connection = null;
+    protected Statement statement = null;
+    protected ResultSet resultSet = null;
+    
+    private String user = "root";
+    private String password = "root";
+    private String schema = "estancias_exterior";
+    
+    public void conectarse() throws SQLException, ClassNotFoundException {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            String url = "jdbc:mysql://localhost:3306/"+schema+"?useSSL=false";
+            connection = DriverManager.getConnection(url, user, password);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new SQLException("Hubo un error al conectarse a la base de datos");
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+            throw new ClassNotFoundException("No se encontró la clase Driver");
+        }
+    }
+    
+
+   public void desconectarse() throws SQLException {
+       try {
+           if (resultSet != null) {
+               resultSet.close();
+           }
+           if (statement != null) {
+               statement.close();
+           }
+           if (connection != null) {
+               connection.close();
+           }
+       } catch (SQLException e) {
+           e.printStackTrace();
+           throw new SQLException("Ocurrio un error al intentar desconectarse");
+       }
+   }
+   public void insertarModificarEliminar(String query) throws ClassNotFoundException, SQLException {
+       conectarse();
+       try {
+            statement = connection.createStatement();
+            statement.executeUpdate(query);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            connection.rollback();
+            throw new SQLException("Ocurrio un error al intentar hacer un CRUD");
+        } finally {
+            desconectarse();
+        }
+   }
+   
+   public void consultar(String query) throws SQLException, ClassNotFoundException {
+        conectarse();
+        try {
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(query);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new SQLException("Ocurrio un error al intentar hacer la consulta");
+        } 
+
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ObjetoDAO
+
+import introjdbc.entidades.Persona;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *
+ * @author Nahue
+ */
+public class PersonaDAO extends DAO{
+    
+    public void crear(Persona persona) throws ClassNotFoundException, SQLException {
+        String query = "insert into persona values("+persona.getId()+",'"+persona.getNombre()+"')";
+        insertarModificarEliminar(query);
+    }
+    
+    public void eliminar(Persona persona) throws ClassNotFoundException, SQLException {
+        String query = "delete from persona where id_persona = "+persona.getId()+"";
+        insertarModificarEliminar(query);
+    }
+    
+    public void modificar(Persona persona) throws ClassNotFoundException, SQLException {
+        String query = "update persona set nombre = '"+persona.getNombre()+"' where id_persona= "+persona.getId()+"";
+        insertarModificarEliminar(query);
+    }
+
+    public List<Persona> listarPersonas() throws SQLException, ClassNotFoundException {
+        try {
+            String query = "SELECT id_persona, nombre FROM persona";
+            consultar(query);
+            Persona persona = null;
+            List<Persona> personas = new ArrayList<>();
+            while (resultSet.next()) {    
+                persona = new Persona();
+                persona.setId(Integer.parseInt(resultSet.getString(1)));
+                persona.setNombre(resultSet.getString(2));
+                personas.add(persona);
+            }
+            return personas;
+        } catch (SQLException e) {
+            throw e;
+        } catch (ClassNotFoundException e) {
+            throw e;
+        } finally {
+            desconectarse();
+        } 
+    }
+    
+    public Persona buscarPorId(Integer id) throws SQLException, ClassNotFoundException {
+        try {
+            String query = "select id_persona, nombre from persona where id_persona = "+id+"";
+            consultar(query);
+            Persona persona = null;
+            while (resultSet.next()) {  
+                persona = new Persona();
+                persona.setId(Integer.parseInt(resultSet.getString(1)));
+                persona.setNombre(resultSet.getString(2));
+            }
+            return persona;
+        } catch (SQLException e) {
+            throw e;
+        } catch (ClassNotFoundException e) {
+            throw e;
+        } finally {
+            desconectarse();
+        } 
+    }
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ObjetoServicio
+
+import introjdbc.daos.PersonaDAO;
+import introjdbc.entidades.Persona;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class PersonaServicio {
+    
+    PersonaDAO personaDao = new PersonaDAO();
+    
+    public void crear(Persona persona) throws ClassNotFoundException, SQLException, Exception {
+         // Acá validamos que el id no sea nulo
+         if (persona.getId() == null) {
+             throw new Exception("El id no puede ser nulo");
+         }
+         // Acá validamos que el nombre 
+         if (persona.getNombre() == null) {
+             throw new Exception("El nombre no puede ser nulo");
+         }
+         //
+         if (personaDao.buscarPorId(persona.getId()) != null) {
+             throw new Exception("Ya existe un persona con ese id");
+         }
+        // Acá vamos a llamar a la personaDao para que inserte nuestro objeto Persona en la base de Datos
+        personaDao.crear(persona);
+       
+    }
+    
+    public void eliminar(Persona persona) throws ClassNotFoundException, SQLException {
+        
+    }
+    
+    public void modificar(Persona persona) throws ClassNotFoundException, SQLException {
+        
+    }
+
+    public void listarPersonas() throws SQLException, ClassNotFoundException {
+       // llamamos al listar persona de personaDAO
+        List<Persona> personas = personaDao.listarPersonas();
+        //Utilizamos un for para mostrar por pantalla la lista de Personas
+        for (Persona persona1 : personas) {
+            System.out.println("id: "+persona1.getId()+" | nombre: "+persona1.getNombre());   
+        }
+    }
+    
+    public void buscarUnaPersona(Persona persona) throws SQLException, ClassNotFoundException {
+        persona = personaDao.buscarPorId(persona.getId());
+        System.out.println("id: "+persona.getId()+" | nombre: "+persona.getNombre());   
+    }
+}
+
+
+https://articulo.mercadolibre.com.ar/MLA-909667154-micro-procesador-intel-dual-core-2020m-24-ghz-pg-988-g26956-_JM#position=45&search_layout=stack&type=item&tracking_id=f2404fc6-a637-4089-83c2-bd087b45372a

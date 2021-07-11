@@ -1,0 +1,132 @@
+
+Entrevista Desarrollador Java Jr
+Nombre y Apellido *
+=================================================
+================================================
+Parte 1: Java
+¿Qué es NullPointerException?
+Se lanza una excepción NullPointerException cuando un objeto se setea a nulo.
+
+Se lanza una excepción NullPointerException al llamar un método de instancia de un objeto nulo o al modificar/acceder un campo de un objeto nulo
+
+Se lanza una excepción NullPointerException cuando una propiedad de un objeto se setea a nulo.
+
+Ninguna de las anteriores.
+=============================================
+¿Cuáles de las siguientes afirmaciones acerca de los constructores son ciertas?
+Un constructor tiene que tener el mismo nombre que la clase en la que se declara
+
+Se usa para crear objetos
+
+Se puede declarar como privado
+
+Todas las anteriores
+===============================================
+¿Qué es una interfaz?
+
+Una súper clase
+
+Es un conjunto de declaraciones de funciones
+
+Una clase que solo puede ser accedida por otras clases del mismo paquete
+
+Un fichero public
+===============================================
+¿Cuál de las siguientes se utiliza para almacenar elementos no únicos con un orden específico?
+Set
+
+List
+
+Map
+
+SortedSet
+===============================================
+Dado el siguiente fragmento de código
+public class A { }
+
+public class Main {
+    public static void main(String[] args) {
+        A a1 = new A();
+        A a2 = new A();
+
+        System.out.println(a1 == a2);
+        System.out.println(a1.equals(a2));
+    }
+}
+
+¿Cuál sera el resultado?
+
+False - False
+False - True
+True - False
+True - True
+=============================================
+Dado el siguiente fragmento de código
+public class Test {
+	public static void main(String[] args) {
+		try {
+			throw new Exception("Hello ");
+		} catch (Exception e) {
+			System.out.print(e.getMessage());
+		} finally {
+			System.out.println("World");
+		}
+	}
+¿Cuál sera el resultado?
+Compile-time error
+Hello
+Hello World
+Hello Hello World
+===========================================================
+===========================================================
+Parte 2: SQL
+Dada una tabla, escribir las sentencias SQL para obtener los resultados correspondientes
+CREATE TABLE rubro
+(
+  id_rubro BIGINT    NOT NULL
+    CONSTRAINT pk_rubro
+    PRIMARY KEY,
+  rubro    VARCHAR(200) NOT NULL
+);
+
+CREATE TABLE proveedor
+(
+  id_proveedor BIGINT    NOT NULL
+    CONSTRAINT pk_proveedor
+    PRIMARY KEY,
+  razon_social  VARCHAR(200) NOT NULL,
+  cuit  VARCHAR(11)
+);
+
+CREATE TABLE producto
+(
+  codigo                     VARCHAR(25)                NOT NULL
+  CONSTRAINT  pk_producto PRIMARY KEY,
+  nombre                     VARCHAR(250)               NOT NULL,
+  fecha_creacion             date,
+  id_rubro                   BIGINT,
+  id_proveedor               BIGINT,
+  FOREIGN KEY (id_rubro) REFERENCES rubro (id_rubro),
+  FOREIGN KEY (id_proveedor) REFERENCES proveedor(id_proveedor)
+);
+====================================================================
+Todos los productos, cuyo nombre empieza con "AR", creados en los últimos dos meses
+
+Cantidad de productos por rubro
+
+Listado de productos de un proveedor con CUIT "2035278963"
+=======================================================================
+=======================================================================
+Parte 3: Código
+ En los siguientes puntos, escribir el código necesario para lograr el resultado (Pseudocodigo o Java)
+Teniendo dos listas de números, mergearlas en una sola lista que no tenga duplicados
+
+=========================================================================
+
+Contar el numero de ocurrencias de cada elemento de un array
+Ejemplo: Entrada int[] arr = {1, 1, 1, 3, 3, 4, 5, 5, 6, 6}; Salida: "La frecuencia de 1 es: 3", "La frecuencia de 3 es: 2", etc.
+
+=========================================================================
+
+Dado un array de integers, encontrar el par de números cuya suma sea la más cercana a cero
+Ejemplo: Entrada array[]={1,3,-5,7,8,20,-40,6}, Salida: -5 , 6
